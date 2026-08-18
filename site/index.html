@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="关达拉美拉美纽杜雪茄管补货邮件提醒。">
+    <title>美纽杜补货提醒</title>
+    <link rel="preconnect" href="https://www.timecigar.com">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main>
+      <section class="product" aria-labelledby="product-title">
+        <div class="masthead">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>库存提醒</span>
+          <a href="https://www.timecigar.com/sc/details/minutos-tubo/4286" target="_blank" rel="noreferrer">查看商品</a>
+        </div>
+
+        <div class="product-grid">
+          <figure class="product-image-wrap">
+            <img class="product-image" src="https://www.timecigar.com/files/product_profile/4286/gallery/01_831.jpg?1644327122" alt="关达拉美拉 美纽杜 雪茄管商品图">
+          </figure>
+          <div class="product-info">
+            <p class="eyebrow">Guantanamera</p>
+            <h1 id="product-title">美纽杜 雪茄管</h1>
+            <p class="subtitle">Minutos Tubo · 2 x 25 支 / 盒</p>
+            <dl class="specs">
+              <div><dt>商品编号</dt><dd>TC-2100004299</dd></div>
+              <div><dt>当前状态</dt><dd><span class="status"><span class="status-dot"></span>监控中</span></dd></div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section class="subscribe" aria-labelledby="subscribe-title">
+        <div class="subscribe-copy">
+          <p class="eyebrow">补货通知</p>
+          <h2 id="subscribe-title">有货时发一封邮件给你</h2>
+          <p>库存状态每隔一段时间自动检查。补货后发送一次提醒，不会发送推广邮件。</p>
+        </div>
+        <form id="subscribe-form" novalidate>
+          <label for="email">邮箱地址</label>
+          <div class="form-row">
+            <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required maxlength="254">
+            <button id="subscribe-button" type="submit">订阅提醒</button>
+          </div>
+          <input class="honeypot" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <p id="form-message" class="form-message" aria-live="polite"></p>
+          <p class="fine-print">提交后需在邮箱中确认订阅。你可随时取消订阅。</p>
+        </form>
+      </section>
+    </main>
+    <footer>
+      <span>仅用于个人库存提醒</span>
+      <a href="https://github.com/reve486/timecigar-restock-notify" target="_blank" rel="noreferrer">源代码</a>
+    </footer>
+    <script src="./config.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
