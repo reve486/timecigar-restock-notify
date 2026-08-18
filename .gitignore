@@ -1,0 +1,5 @@
+site/config.js
+.wrangler/
+node_modules/
+__pycache__/
+.env
