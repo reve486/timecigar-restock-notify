@@ -1,47 +1,47 @@
 # TimeCigar 美纽杜补货提醒
 
-公开订阅页 + 私有订阅服务 + GitHub Actions 库存检查。
+给自己和少量朋友使用的 TimeCigar 库存监控与 QQ 邮箱提醒。
 
-目标商品：关达拉美拉 美纽杜 雪茄管（`TC-2100004299`）。库存检查直接访问商品详情组件；2026-08-18 验证结果为“已售罄”。
+当前监控 3 件商品：
+
+| 商品 | 商品编号 | 当前状态 |
+|---|---|---|
+| 美纽杜 雪茄管，2 x 25 支 / 盒 | `TC-2100004299` | 无货 |
+| 美纽杜，40 支 | `TC-2100007413` | 无货 |
+| 美纽杜 雪茄管，15 x 3 支 / 盒 | `TC-2100004909` | 无货 |
+
+页面会读取仓库中公开的库存状态文件；其中不含邮箱、邀请码或任何密钥。
 
 ## 架构
 
-| 部分 | 用途 | 是否公开 |
+| 部分 | 用途 | 隐私 |
 |---|---|---|
-| GitHub Pages | 商品页和订阅表单 | 是 |
-| Cloudflare Worker + D1 | 保存确认后的订阅邮箱、去重和退订 | 否，数据私有 |
-| Resend | 确认订阅和补货邮件 | 否，API 密钥私有 |
-| GitHub Actions | 每 10 分钟检查一次库存 | 工作流公开，密钥私有 |
+| GitHub Pages | 公开状态页和邀请码订阅表单 | 公开，不保存邮箱 |
+| Cloudflare Worker + D1 | 保存朋友的订阅邮箱和退订令牌 | 私有 |
+| GitHub Actions | 每 10 分钟检查库存，并通过 QQ SMTP 发信 | 密钥仅存 GitHub Secrets |
 
-订阅使用双确认：用户填邮箱后必须点击确认链接，才会收到补货提醒。邮箱地址、Resend 密钥和监控口令都不提交到此公开仓库。
+邀请码订阅适合小范围朋友使用。网站不做公开注册，也不会显示或泄露订阅者邮箱。
 
-## 先部署网页
+## 你需要准备的内容
 
-1. 在仓库 **Settings → Pages** 中将 Source 设为 **GitHub Actions**。
-2. 推送到 `main` 后，`Deploy public site` 工作流会发布网页。
-3. 默认地址为 `https://reve486.github.io/timecigar-restock-notify/`。
+1. 一个 QQ 邮箱作为发件箱。
+2. QQ 邮箱的 SMTP 授权码，不是 QQ 登录密码。
+3. 一个免费的 Cloudflare 账户，用于保存订阅列表。
+4. 一段只发给朋友的邀请码，例如随机的 16 位字母数字字符串。
 
-若未配置私有订阅服务，网页会显示“订阅服务正在配置中”，不会收集邮箱。
+## 1. 取得 QQ SMTP 授权码
 
-## 配置邮件服务
+在 QQ 邮箱网页版中：
 
-推荐使用 [Resend](https://resend.com/)，因为它为程序化邮件提供 API、域名验证和退订能力。需要一个能作为发件人的已验证邮箱，例如：
+1. 进入 **设置 → 账户**。
+2. 找到 **POP3/IMAP/SMTP 服务**，开启 SMTP 服务。
+3. 按 QQ 的验证流程生成授权码。
 
-```text
-美纽杜补货提醒 <notify@你的域名.com>
-```
+不要把授权码粘贴到仓库、网页、聊天记录或 `config.js`；它只会被填入 GitHub Secret。
 
-不建议把个人 QQ/Gmail 登录密码放入自动化。QQ/163/Gmail 的 SMTP 授权码适合仅给自己发邮件；对公开订阅者，使用独立的发件域名和事务邮件服务更稳妥。
+## 2. 部署订阅服务
 
-在 Resend 中完成：
-
-1. 注册账户并验证一个自己控制的域名。
-2. 添加 DNS 记录，验证发件域名。
-3. 创建 API key。该 key 只放入 Cloudflare Worker Secret。
-
-## 部署私有订阅服务
-
-需要 Cloudflare 账户（免费套餐即可）和 Node.js 20+。
+先登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)。电脑需安装 Node.js 20+ 后，在本仓库运行：
 
 ```powershell
 cd worker
@@ -50,68 +50,52 @@ npx wrangler login
 npx wrangler d1 create timecigar-restock
 ```
 
-将最后一条命令输出的 `database_id` 写入 `worker/wrangler.jsonc`。同时把 `APP_ORIGIN` 改为 GitHub Pages 的完整来源：
-
-```text
-https://reve486.github.io
-```
-
-初始化数据库：
+把最后一条命令输出的 `database_id` 写入 `worker/wrangler.jsonc`。初始化数据库：
 
 ```powershell
 npx wrangler d1 execute timecigar-restock --remote --file schema.sql
 ```
 
-依次设置 2 个机密值；输入时它们不会写入仓库：
+设置两个 Worker Secret：
 
 ```powershell
-npx wrangler secret put RESEND_API_KEY
 npx wrangler secret put MONITOR_TOKEN
+npx wrangler secret put SUBSCRIPTION_CODE
 ```
 
-`MONITOR_TOKEN` 应是长随机字符串，例如在 PowerShell 运行：
+- `MONITOR_TOKEN`：长随机字符串；它要与 GitHub Secret 的同名值一致。
+- `SUBSCRIPTION_CODE`：发给朋友的邀请码；它只存于 Worker。
 
-```powershell
-[guid]::NewGuid().ToString('N') + [guid]::NewGuid().ToString('N')
-```
-
-部署：
+部署 Worker：
 
 ```powershell
 npx wrangler deploy
 ```
 
-记下 Worker 的公开 URL，例如 `https://timecigar-restock-api.<你的子域>.workers.dev`。
+记下生成的 Worker 根地址，例如 `https://timecigar-restock-api.<你的子域>.workers.dev`。
 
-## 连接 GitHub Pages 和监控任务
+## 3. 设置 GitHub Secrets
 
-在 GitHub 仓库 **Settings → Secrets and variables → Actions** 中新增这些 secrets：
+在仓库 **Settings → Secrets and variables → Actions** 新建以下 Secrets：
 
 | Secret | 值 |
 |---|---|
 | `SUBSCRIPTION_ENDPOINT` | `https://...workers.dev/api/subscribe` |
-| `MONITOR_ENDPOINT` | Worker 根地址，例如 `https://...workers.dev` |
-| `MONITOR_TOKEN` | 与 Worker 中相同的随机口令 |
+| `MONITOR_ENDPOINT` | `https://...workers.dev` |
+| `MONITOR_TOKEN` | 与 Worker 中相同的随机字符串 |
+| `QQ_SMTP_USERNAME` | 你的完整 QQ 邮箱地址 |
+| `QQ_SMTP_AUTH_CODE` | QQ 生成的 SMTP 授权码 |
 
-然后在 Actions 页面运行两次：
+然后运行 Actions 中的 **Deploy public site**。网页会启用邮箱和邀请码表单。
 
-1. **Deploy public site**，将订阅 API 地址写入网页配置。
-2. **Check TimeCigar stock**，检查一次库存并把当前“无货”状态同步到 Worker。
+## 4. 发送测试邮件
 
-之后 GitHub Actions 每 10 分钟检查一次。只有库存从非“有货”转变为“有货”时，Worker 才会向已确认订阅者发送一封邮件。
+在 GitHub Actions 中打开 **Check TimeCigar stock → Run workflow**，勾选 `test_email`。成功后，QQ 发件邮箱会收到一封测试邮件。
 
-## 本地检查
+之后无需手动操作。工作流每 10 分钟检查一次；任意商品由无货转为有货时，会给每位订阅者单独发送邮件，收件人互相看不到邮箱。
 
-库存脚本没有第三方 Python 依赖：
+## 限制
 
-```powershell
-python monitor/monitor.py
-```
-
-若未设置 `MONITOR_ENDPOINT` 和 `MONITOR_TOKEN`，它只输出库存状态，不会发送通知。
-
-## 重要限制
-
-- GitHub Actions 的定时任务不是严格实时服务；GitHub 负载较高时可能延后。10 分钟是对网站压力和提醒及时性的折中。
-- 补货邮件只是提示，最终库存、价格和配送资格以 TimeCigar 商品页为准。
-- 发送商业或大量邮件前，应遵守收件人所在地的反垃圾邮件规则；双确认和退订链接不应删除。
+- QQ SMTP 适合少量个人提醒。请不要把邀请码公开发布，也不要用于大量群发。
+- GitHub Actions 的定时任务可能延后，不能视为实时交易服务。
+- 补货邮件只是提示；库存、价格和购买资格以 TimeCigar 页面为准。
