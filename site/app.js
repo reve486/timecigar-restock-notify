@@ -64,7 +64,7 @@
       if (!response.ok) throw new Error(data.error || "request failed");
       email.value = "";
       inviteCode.value = "";
-      showMessage("已订阅。补货时会发送邮件提醒。", "success");
+      showMessage("订阅成功。确认邮件即将发送，补货时也会提醒你。", "success");
     } catch (error) {
       showMessage(error.message === "邀请码不正确。" ? error.message : "暂时无法提交订阅，请稍后重试。", "error");
     } finally {
