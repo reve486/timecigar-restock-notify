@@ -2,7 +2,7 @@ name: Check TimeCigar stock
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:
     inputs:
       test_email:
@@ -13,6 +13,10 @@ on:
 
 permissions:
   contents: write
+
+concurrency:
+  group: timecigar-stock-check
+  cancel-in-progress: false
 
 jobs:
   check:
