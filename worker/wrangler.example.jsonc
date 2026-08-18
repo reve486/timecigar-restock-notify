@@ -1,0 +1,16 @@
+{
+  "name": "timecigar-restock-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-08-18",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "timecigar-restock",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+    }
+  ],
+  "vars": {
+    "APP_ORIGIN": "https://reve486.github.io",
+    "FROM_EMAIL": "美纽杜补货提醒 <notify@your-domain.example>"
+  }
+}
