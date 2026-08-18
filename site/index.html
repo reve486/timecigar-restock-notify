@@ -27,9 +27,31 @@
             <p class="subtitle">Minutos Tubo · 2 x 25 支 / 盒</p>
             <dl class="specs">
               <div><dt>商品编号</dt><dd>TC-2100004299</dd></div>
-              <div><dt>当前状态</dt><dd><span class="status"><span class="status-dot"></span>监控中</span></dd></div>
+              <div><dt>当前状态</dt><dd><span class="status unknown" data-status="timecigar-4286"><span class="status-dot"></span><span>等待检查</span></span></dd></div>
             </dl>
           </div>
+        </div>
+      </section>
+
+      <section class="inventory" aria-labelledby="inventory-title">
+        <div>
+          <p class="eyebrow">库存状态</p>
+          <h2 id="inventory-title">三件商品，统一提醒</h2>
+          <p id="last-checked" class="status-note">正在读取最近一次检查结果。</p>
+        </div>
+        <div class="inventory-list" aria-live="polite">
+          <a class="inventory-row" data-product-key="timecigar-4286" href="https://www.timecigar.com/sc/details/minutos-tubo/4286" target="_blank" rel="noreferrer">
+            <span><strong>美纽杜 雪茄管</strong><small>2 x 25 支 / 盒</small></span>
+            <span class="status unknown" data-status="timecigar-4286"><span class="status-dot"></span><span>等待检查</span></span>
+          </a>
+          <a class="inventory-row" data-product-key="timecigar-7400" href="https://www.timecigar.com/sc/details/minutos/7400" target="_blank" rel="noreferrer">
+            <span><strong>美纽杜</strong><small>40 支</small></span>
+            <span class="status unknown" data-status="timecigar-7400"><span class="status-dot"></span><span>等待检查</span></span>
+          </a>
+          <a class="inventory-row" data-product-key="timecigar-4896" href="https://www.timecigar.com/sc/details/minutos-tubo/4896" target="_blank" rel="noreferrer">
+            <span><strong>美纽杜 雪茄管</strong><small>15 x 3 支 / 盒</small></span>
+            <span class="status unknown" data-status="timecigar-4896"><span class="status-dot"></span><span>等待检查</span></span>
+          </a>
         </div>
       </section>
 
@@ -37,17 +59,18 @@
         <div class="subscribe-copy">
           <p class="eyebrow">补货通知</p>
           <h2 id="subscribe-title">有货时发一封邮件给你</h2>
-          <p>库存状态每隔一段时间自动检查。补货后发送一次提醒，不会发送推广邮件。</p>
+          <p>仅供受邀朋友使用。补货后发送一次提醒，不会发送推广邮件。</p>
         </div>
         <form id="subscribe-form" novalidate>
           <label for="email">邮箱地址</label>
           <div class="form-row">
             <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required maxlength="254">
+            <input id="invite-code" name="inviteCode" type="text" autocomplete="off" placeholder="邀请码" required minlength="6" maxlength="128">
             <button id="subscribe-button" type="submit">订阅提醒</button>
           </div>
           <input class="honeypot" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
           <p id="form-message" class="form-message" aria-live="polite"></p>
-          <p class="fine-print">提交后需在邮箱中确认订阅。你可随时取消订阅。</p>
+          <p class="fine-print">邀请码由站点管理者私下提供。每封提醒均附有取消订阅链接。</p>
         </form>
       </section>
     </main>
