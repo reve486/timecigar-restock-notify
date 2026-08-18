@@ -4,9 +4,15 @@ on:
   schedule:
     - cron: "*/10 * * * *"
   workflow_dispatch:
+    inputs:
+      test_email:
+        description: "Send a QQ SMTP test email to the sender inbox"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   check:
@@ -21,4 +27,14 @@ jobs:
         env:
           MONITOR_ENDPOINT: ${{ secrets.MONITOR_ENDPOINT }}
           MONITOR_TOKEN: ${{ secrets.MONITOR_TOKEN }}
+          QQ_SMTP_USERNAME: ${{ secrets.QQ_SMTP_USERNAME }}
+          QQ_SMTP_AUTH_CODE: ${{ secrets.QQ_SMTP_AUTH_CODE }}
+          TEST_EMAIL: ${{ inputs.test_email }}
         run: python monitor/monitor.py
+      - name: Persist confirmed inventory state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add monitor/state.json
+          git diff --cached --quiet || git commit -m "chore: persist inventory state"
+          git push
