@@ -105,7 +105,7 @@ def save_state(state: dict) -> None:
     temporary.replace(STATE_PATH)
 
 
-def subscribers() -> list[dict[str, str]]:
+def subscribers() -> list[dict]:
     endpoint = os.environ.get("MONITOR_ENDPOINT", "").rstrip("/")
     token = os.environ.get("MONITOR_TOKEN", "")
     if not endpoint or not token:
@@ -119,6 +119,26 @@ def subscribers() -> list[dict[str, str]]:
     return [item for item in payload.get("subscribers", []) if item.get("email") and item.get("unsubscribe_url")]
 
 
+def mark_welcome_sent(token: str) -> None:
+    endpoint = os.environ.get("MONITOR_ENDPOINT", "").rstrip("/")
+    token = os.environ.get("MONITOR_TOKEN", "")
+    if not endpoint or not token:
+        raise RuntimeError("MONITOR_ENDPOINT 和 MONITOR_TOKEN 尚未配置")
+    body = json.dumps({"token": token}).encode("utf-8")
+    request = urllib.request.Request(
+        f"{endpoint}/api/subscribers/welcome-sent",
+        data=body,
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        },
+    )
+    with urllib.request.urlopen(request, timeout=30) as response:
+        if response.status < 200 or response.status >= 300:
+            raise RuntimeError(f"确认邮件状态更新失败: HTTP {response.status}")
+
+
 def smtp_settings() -> tuple[str, str]:
     username = os.environ.get("QQ_SMTP_USERNAME", "").strip()
     auth_code = os.environ.get("QQ_SMTP_AUTH_CODE", "")
@@ -127,8 +147,14 @@ def smtp_settings() -> tuple[str, str]:
     return username, auth_code
 
 
-def send_messages(items: list[tuple[Product, str]], recipients: list[dict[str, str]], test: bool = False) -> None:
+def send_messages(
+    items: list[tuple[Product, str]],
+    recipients: list[dict[str, str]],
+    test: bool = False,
+    welcome: bool = False,
+) -> list[dict]:
     username, auth_code = smtp_settings()
+    sent: list[dict] = []
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.qq.com", 465, context=context, timeout=30) as server:
         server.login(username, auth_code)
@@ -139,6 +165,15 @@ def send_messages(items: list[tuple[Product, str]], recipients: list[dict[str, s
             if test:
                 message["Subject"] = "[测试成功] TimeCigar 补货提醒"
                 message.set_content("QQ 邮箱 SMTP 配置正常。之后补货时会自动发送提醒。")
+            elif welcome:
+                message["Subject"] = "恭喜你订阅成功｜TimeCigar 补货提醒"
+                message.set_content(
+                    "恭喜你，TimeCigar 补货提醒订阅成功！\n\n"
+                    "我们会检查你订阅的商品；一旦发现从无货变为有货，就会尽快发邮件提醒你。\n"
+                    "当前监控商品：4286、7400、4896。\n\n"
+                    f"取消订阅：{recipient['unsubscribe_url']}\n"
+                    "库存、价格和购买资格以商店页面为准。"
+                )
             else:
                 product, detail = items[0]
                 message["Subject"] = f"[补货提醒] {product.name}"
@@ -150,6 +185,8 @@ def send_messages(items: list[tuple[Product, str]], recipients: list[dict[str, s
                     f"取消订阅: {recipient['unsubscribe_url']}"
                 )
             server.send_message(message)
+            sent.append(recipient)
+    return sent
 
 
 def test_email() -> int:
@@ -185,8 +222,25 @@ def main() -> int:
         if status == "in_stock" and old.get("status") != "in_stock":
             alerts.append((product, detail))
 
-    if alerts:
+    try:
         recipients = subscribers()
+    except (OSError, urllib.error.URLError, ValueError, RuntimeError) as error:
+        if alerts:
+            raise
+        print(f"读取订阅列表失败，本次只保存库存状态: {error}")
+        recipients = []
+
+    pending_welcome = [recipient for recipient in recipients if recipient.get("welcome_pending")]
+    if pending_welcome:
+        sent = send_messages([], pending_welcome, welcome=True)
+        for recipient in sent:
+            try:
+                mark_welcome_sent(recipient["token"])
+            except (OSError, urllib.error.URLError, ValueError, RuntimeError) as error:
+                print(f"确认邮件已发送，但状态更新失败 ({recipient['email']}): {error}")
+        print(f"已向 {len(sent)} 位新订阅者发送订阅成功邮件。")
+
+    if alerts:
         if recipients:
             for alert in alerts:
                 send_messages([alert], recipients)
