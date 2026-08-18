@@ -1,0 +1,48 @@
+name: Verify subscription service
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    env:
+      API_ENDPOINT: ${{ secrets.MONITOR_ENDPOINT }}
+      MONITOR_TOKEN: ${{ secrets.MONITOR_TOKEN }}
+      SUBSCRIPTION_CODE: ${{ secrets.SUBSCRIPTION_CODE }}
+      TEST_EMAIL: ${{ secrets.QQ_SMTP_USERNAME }}
+      PUBLIC_ORIGIN: https://reve486.github.io
+    steps:
+      - name: Check service health
+        run: curl --fail --silent --show-error "$API_ENDPOINT/api/health"
+      - name: Check browser CORS policy
+        run: |
+          response="$(curl --silent --show-error --dump-header - --output /dev/null --request OPTIONS "$API_ENDPOINT/api/subscribe" \
+            --header "Origin: $PUBLIC_ORIGIN" \
+            --header "Access-Control-Request-Method: POST" \
+            --header "Access-Control-Request-Headers: Content-Type")"
+          printf '%s\n' "$response" | tr -d '\r' | grep -Fx "access-control-allow-origin: $PUBLIC_ORIGIN"
+      - name: Subscribe the notification inbox
+        run: |
+          status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --request POST "$API_ENDPOINT/api/subscribe" \
+            --header "Origin: $PUBLIC_ORIGIN" \
+            --header 'Content-Type: application/json' \
+            --data "{\"email\":\"$TEST_EMAIL\",\"inviteCode\":\"$SUBSCRIPTION_CODE\"}")"
+          test "$status" = "202"
+      - name: Confirm the active subscriber
+        run: |
+          curl --fail --silent --show-error "$API_ENDPOINT/api/subscribers" \
+            --header "Authorization: Bearer $MONITOR_TOKEN" > subscribers.json
+          python - <<'PY'
+          import json
+          import os
+
+          subscribers = json.load(open("subscribers.json", encoding="utf-8")).get("subscribers", [])
+          assert any(item.get("email") == os.environ["TEST_EMAIL"] for item in subscribers)
+          print("Subscriber is active.")
+          PY
