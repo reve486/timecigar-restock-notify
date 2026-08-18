@@ -1,0 +1,79 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  background: #f3f5f1;
+  color: #18211b;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; min-width: 320px; }
+
+main { max-width: 1060px; margin: 0 auto; padding: 28px 24px 48px; }
+
+.product { border-bottom: 1px solid #c9d1c6; padding-bottom: 52px; }
+
+.masthead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #496153;
+}
+
+.masthead a { margin-left: auto; color: inherit; text-decoration: none; border-bottom: 1px solid #93a898; padding-bottom: 2px; }
+.masthead a:hover { color: #17251c; border-color: #17251c; }
+
+.brand-mark { width: 9px; height: 9px; background: #cf573b; display: inline-block; }
+
+.product-grid { display: grid; grid-template-columns: minmax(250px, .85fr) minmax(300px, 1.15fr); align-items: center; gap: 84px; padding-top: 52px; }
+
+.product-image-wrap { background: #e5e9e3; margin: 0; min-height: 390px; display: grid; place-items: center; overflow: hidden; }
+.product-image { width: 100%; height: 390px; object-fit: contain; mix-blend-mode: multiply; padding: 28px; }
+
+.eyebrow { color: #56705e; font-size: 13px; letter-spacing: 0; margin: 0 0 12px; font-weight: 700; text-transform: uppercase; }
+h1, h2 { font-family: Georgia, "Songti SC", serif; font-weight: 400; letter-spacing: 0; margin: 0; }
+h1 { font-size: 46px; line-height: 1.12; }
+h2 { font-size: 34px; line-height: 1.18; max-width: 420px; }
+.subtitle { color: #5e6b62; margin: 16px 0 32px; font-size: 16px; }
+
+.specs { border-top: 1px solid #c9d1c6; margin: 0; }
+.specs div { display: flex; justify-content: space-between; align-items: center; gap: 16px; border-bottom: 1px solid #c9d1c6; padding: 14px 0; }
+.specs dt { color: #67736a; font-size: 14px; }
+.specs dd { margin: 0; color: #1f2b22; font-size: 14px; font-weight: 600; text-align: right; }
+.status { display: inline-flex; align-items: center; gap: 7px; color: #276143; }
+.status-dot { width: 8px; height: 8px; background: #42a46e; border-radius: 50%; display: inline-block; }
+
+.subscribe { display: grid; grid-template-columns: 1fr 1fr; gap: 84px; padding: 64px 0 16px; align-items: start; }
+.subscribe-copy p:not(.eyebrow) { max-width: 450px; line-height: 1.75; color: #536056; margin: 18px 0 0; }
+
+form { padding-top: 4px; }
+label { display: block; color: #344238; font-size: 14px; font-weight: 700; margin-bottom: 9px; }
+.form-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
+input[type="email"] { width: 100%; min-width: 0; height: 48px; border: 1px solid #9ba89f; border-radius: 2px; background: #fbfcfa; color: #18211b; padding: 0 13px; font: inherit; }
+input[type="email"]:focus { outline: 3px solid #b7d7c0; outline-offset: 1px; border-color: #4e8a61; }
+button { height: 48px; border: 0; border-radius: 2px; background: #1d5136; color: #fff; padding: 0 20px; font: inherit; font-weight: 700; cursor: pointer; white-space: nowrap; }
+button:hover:not(:disabled) { background: #143c27; }
+button:focus-visible { outline: 3px solid #b7d7c0; outline-offset: 2px; }
+button:disabled { background: #7d8b80; cursor: not-allowed; }
+.form-message { min-height: 23px; margin: 12px 0 0; font-size: 14px; line-height: 1.5; color: #44544a; }
+.form-message.error { color: #a3412b; }
+.form-message.success { color: #1e6b42; }
+.fine-print { color: #6d786f; font-size: 12px; line-height: 1.6; margin: 2px 0 0; }
+.honeypot { position: absolute; left: -10000px; opacity: 0; pointer-events: none; }
+
+footer { max-width: 1060px; margin: 0 auto; padding: 22px 24px 34px; border-top: 1px solid #c9d1c6; display: flex; justify-content: space-between; gap: 16px; color: #637068; font-size: 13px; }
+footer a { color: inherit; }
+
+@media (max-width: 720px) {
+  main { padding: 20px 18px 38px; }
+  .product { padding-bottom: 40px; }
+  .product-grid, .subscribe { grid-template-columns: 1fr; gap: 36px; padding-top: 36px; }
+  .product-image-wrap, .product-image { min-height: 300px; height: 300px; }
+  h1 { font-size: 38px; }
+  h2 { font-size: 30px; }
+  .subscribe { padding-bottom: 8px; }
+  .form-row { grid-template-columns: 1fr; }
+  button { width: 100%; }
+  footer { padding: 18px; }
+}
