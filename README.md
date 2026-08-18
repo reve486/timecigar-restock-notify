@@ -18,7 +18,7 @@
 |---|---|---|
 | GitHub Pages | 公开状态页和邀请码订阅表单 | 公开，不保存邮箱 |
 | Cloudflare Worker + D1 | 保存朋友的订阅邮箱和退订令牌 | 私有 |
-| GitHub Actions | 每 10 分钟检查库存，并通过 QQ SMTP 发信 | 密钥仅存 GitHub Secrets |
+| GitHub Actions | 每 5 分钟检查库存，并通过 QQ SMTP 发信 | 密钥仅存 GitHub Secrets |
 
 邀请码订阅适合小范围朋友使用。网站不做公开注册，也不会显示或泄露订阅者邮箱。
 
@@ -56,6 +56,8 @@ npx wrangler d1 create timecigar-restock
 npx wrangler d1 execute timecigar-restock --remote --file schema.sql
 ```
 
+如果数据库已经存在，在部署本版本前再执行一次 `worker/migrations/0001_add_welcome_sent_at.sql`（Cloudflare D1 控制台或 Wrangler 均可），用于记录订阅成功邮件是否已经发送。
+
 设置两个 Worker Secret：
 
 ```powershell
@@ -92,10 +94,10 @@ npx wrangler deploy
 
 在 GitHub Actions 中打开 **Check TimeCigar stock → Run workflow**，勾选 `test_email`。成功后，QQ 发件邮箱会收到一封测试邮件。
 
-之后无需手动操作。工作流每 10 分钟检查一次；任意商品由无货转为有货时，会给每位订阅者单独发送邮件，收件人互相看不到邮箱。
+之后无需手动操作。工作流每 5 分钟检查一次；新订阅者会收到一封“恭喜你订阅成功”的确认邮件，任意商品由无货转为有货时，会给每位订阅者单独发送邮件，收件人互相看不到邮箱。
 
 ## 限制
 
 - QQ SMTP 适合少量个人提醒。请不要把邀请码公开发布，也不要用于大量群发。
-- GitHub Actions 的定时任务可能延后，不能视为实时交易服务。
+- GitHub Actions 免费计划的最短计划周期是 5 分钟，且定时任务可能延后，不能保证秒级或实时抢购；需要更快响应时应使用常驻服务器或专门的监控服务。
 - 补货邮件只是提示；库存、价格和购买资格以 TimeCigar 页面为准。
