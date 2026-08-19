@@ -112,7 +112,11 @@ def subscribers() -> list[dict]:
         raise RuntimeError("MONITOR_ENDPOINT 和 MONITOR_TOKEN 尚未配置")
     request = urllib.request.Request(
         f"{endpoint}/api/subscribers",
-        headers={"Authorization": f"Bearer {token}"},
+        headers={
+            "Authorization": f"Bearer {token}",
+            "User-Agent": "Mozilla/5.0 (compatible; TimeCigarRestockMonitor/1.0)",
+            "Accept": "application/json",
+        },
     )
     with urllib.request.urlopen(request, timeout=30) as response:
         payload = json.loads(response.read().decode("utf-8"))
