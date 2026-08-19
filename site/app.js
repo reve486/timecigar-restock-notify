@@ -82,4 +82,5 @@
   });
 
   loadStatuses();
+  window.setInterval(loadStatuses, 60000);
 }());
