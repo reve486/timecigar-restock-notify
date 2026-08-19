@@ -119,26 +119,6 @@ def subscribers() -> list[dict]:
     return [item for item in payload.get("subscribers", []) if item.get("email") and item.get("unsubscribe_url")]
 
 
-def mark_welcome_sent(token: str) -> None:
-    endpoint = os.environ.get("MONITOR_ENDPOINT", "").rstrip("/")
-    token = os.environ.get("MONITOR_TOKEN", "")
-    if not endpoint or not token:
-        raise RuntimeError("MONITOR_ENDPOINT 和 MONITOR_TOKEN 尚未配置")
-    body = json.dumps({"token": token}).encode("utf-8")
-    request = urllib.request.Request(
-        f"{endpoint}/api/subscribers/welcome-sent",
-        data=body,
-        method="POST",
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-        },
-    )
-    with urllib.request.urlopen(request, timeout=30) as response:
-        if response.status < 200 or response.status >= 300:
-            raise RuntimeError(f"确认邮件状态更新失败: HTTP {response.status}")
-
-
 def smtp_settings() -> tuple[str, str]:
     username = os.environ.get("QQ_SMTP_USERNAME", "").strip()
     auth_code = os.environ.get("QQ_SMTP_AUTH_CODE", "")
@@ -200,7 +180,9 @@ def main() -> int:
     if os.environ.get("TEST_EMAIL", "").lower() == "true":
         return test_email()
 
-    previous = load_state().get("products", {})
+    saved_state = load_state()
+    previous = saved_state.get("products", {})
+    welcome_sent: dict[str, str] = saved_state.get("welcome_sent", {})
     next_state: dict[str, dict[str, str]] = {}
     alerts: list[tuple[Product, str]] = []
     for product in PRODUCTS:
@@ -230,14 +212,13 @@ def main() -> int:
         print(f"读取订阅列表失败，本次只保存库存状态: {error}")
         recipients = []
 
-    pending_welcome = [recipient for recipient in recipients if recipient.get("welcome_pending")]
+    # Keep this ledger in the committed monitor state so this also works with
+    # older Worker deployments that do not expose a welcome-mail column yet.
+    pending_welcome = [recipient for recipient in recipients if recipient["email"] not in welcome_sent]
     if pending_welcome:
         sent = send_messages([], pending_welcome, welcome=True)
         for recipient in sent:
-            try:
-                mark_welcome_sent(recipient["token"])
-            except (OSError, urllib.error.URLError, ValueError, RuntimeError) as error:
-                print(f"确认邮件已发送，但状态更新失败 ({recipient['email']}): {error}")
+            welcome_sent[recipient["email"]] = now()
         print(f"已向 {len(sent)} 位新订阅者发送订阅成功邮件。")
 
     if alerts:
@@ -248,7 +229,7 @@ def main() -> int:
         else:
             print("没有已订阅的收件人，本次不发送邮件。")
 
-    save_state({"products": next_state})
+    save_state({"products": next_state, "welcome_sent": welcome_sent})
     return 0
 
 
