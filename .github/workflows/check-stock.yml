@@ -1,8 +1,6 @@
 name: Check TimeCigar stock
 
 on:
-  schedule:
-    - cron: "*/5 * * * *"
   workflow_dispatch:
     inputs:
       test_email:
@@ -29,7 +27,7 @@ jobs:
           python-version: "3.12"
       - name: Check inventory and notify subscribers
         env:
-          MONITOR_ENDPOINT: https://timecigar-restock-api.laowang0412.workers.dev
+          MONITOR_ENDPOINT: ${{ secrets.MONITOR_ENDPOINT }}
           MONITOR_TOKEN: ${{ secrets.MONITOR_TOKEN }}
           QQ_SMTP_USERNAME: ${{ secrets.QQ_SMTP_USERNAME }}
           QQ_SMTP_AUTH_CODE: ${{ secrets.QQ_SMTP_AUTH_CODE }}
