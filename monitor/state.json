@@ -3,19 +3,19 @@
     "timecigar-4286": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-09-16T03:09:13+00:00",
+      "checked_at": "2026-09-16T03:10:25+00:00",
       "detail": "请求失败: HTTP Error 500: Internal Server Error"
     },
     "timecigar-7400": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-09-16T03:09:14+00:00",
+      "checked_at": "2026-09-16T03:10:26+00:00",
       "detail": "请求失败: HTTP Error 500: Internal Server Error"
     },
     "timecigar-4896": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-09-16T03:09:14+00:00",
+      "checked_at": "2026-09-16T03:10:26+00:00",
       "detail": "请求失败: HTTP Error 500: Internal Server Error"
     }
   },
