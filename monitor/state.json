@@ -3,19 +3,19 @@
     "timecigar-4286": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-10-18T01:49:13+00:00",
+      "checked_at": "2026-10-18T01:50:23+00:00",
       "detail": "请求失败: HTTP Error 404: Not Found"
     },
     "timecigar-7400": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-10-18T01:49:13+00:00",
+      "checked_at": "2026-10-18T01:50:24+00:00",
       "detail": "请求失败: HTTP Error 404: Not Found"
     },
     "timecigar-4896": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-10-18T01:49:14+00:00",
+      "checked_at": "2026-10-18T01:50:24+00:00",
       "detail": "请求失败: HTTP Error 404: Not Found"
     }
   },
