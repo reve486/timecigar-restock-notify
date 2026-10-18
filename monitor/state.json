@@ -3,19 +3,19 @@
     "timecigar-4286": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-10-18T02:00:40+00:00",
+      "checked_at": "2026-10-18T02:01:14+00:00",
       "detail": "请求失败: HTTP Error 502: Bad Gateway"
     },
     "timecigar-7400": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-10-18T02:00:40+00:00",
+      "checked_at": "2026-10-18T02:01:15+00:00",
       "detail": "请求失败: HTTP Error 502: Bad Gateway"
     },
     "timecigar-4896": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-10-18T02:00:40+00:00",
+      "checked_at": "2026-10-18T02:01:15+00:00",
       "detail": "请求失败: HTTP Error 502: Bad Gateway"
     }
   },
