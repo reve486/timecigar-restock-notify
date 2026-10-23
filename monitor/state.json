@@ -2,20 +2,20 @@
   "products": {
     "timecigar-4286": {
       "status": "out_of_stock",
-      "last_checked_status": "unknown",
-      "checked_at": "2026-10-23T02:51:54+00:00",
-      "detail": "请求失败: The read operation timed out"
+      "last_checked_status": "out_of_stock",
+      "checked_at": "2026-10-23T02:54:30+00:00",
+      "detail": "检测到缺货标志: 已售罄, 售罄"
     },
     "timecigar-7400": {
       "status": "out_of_stock",
-      "last_checked_status": "unknown",
-      "checked_at": "2026-10-23T02:52:44+00:00",
-      "detail": "请求失败: The read operation timed out"
+      "last_checked_status": "out_of_stock",
+      "checked_at": "2026-10-23T02:54:33+00:00",
+      "detail": "检测到缺货标志: 已售罄, 售罄"
     },
     "timecigar-4896": {
       "status": "out_of_stock",
       "last_checked_status": "out_of_stock",
-      "checked_at": "2026-10-23T02:52:56+00:00",
+      "checked_at": "2026-10-23T02:54:35+00:00",
       "detail": "检测到缺货标志: 已售罄, 售罄"
     }
   },
