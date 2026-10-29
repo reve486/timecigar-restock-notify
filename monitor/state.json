@@ -3,19 +3,19 @@
     "timecigar-4286": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-10-29T23:18:18+00:00",
+      "checked_at": "2026-10-29T23:19:15+00:00",
       "detail": "商品身份校验失败: 缺少 TC-2100004299, Minutos Tubo"
     },
     "timecigar-7400": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-10-29T23:18:18+00:00",
+      "checked_at": "2026-10-29T23:19:15+00:00",
       "detail": "商品身份校验失败: 缺少 TC-2100007413, Minutos"
     },
     "timecigar-4896": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-10-29T23:18:18+00:00",
+      "checked_at": "2026-10-29T23:19:15+00:00",
       "detail": "商品身份校验失败: 缺少 TC-2100004909, Minutos Tubo"
     }
   },
