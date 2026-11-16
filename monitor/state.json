@@ -3,20 +3,20 @@
     "timecigar-4286": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-11-16T03:28:16+00:00",
-      "detail": "请求失败: HTTP Error 500: Internal Server Error"
+      "checked_at": "2026-11-16T03:29:44+00:00",
+      "detail": "请求失败: The read operation timed out"
     },
     "timecigar-7400": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-11-16T03:28:16+00:00",
-      "detail": "请求失败: HTTP Error 500: Internal Server Error"
+      "checked_at": "2026-11-16T03:30:14+00:00",
+      "detail": "请求失败: The read operation timed out"
     },
     "timecigar-4896": {
       "status": "out_of_stock",
       "last_checked_status": "unknown",
-      "checked_at": "2026-11-16T03:28:17+00:00",
-      "detail": "请求失败: HTTP Error 500: Internal Server Error"
+      "checked_at": "2026-11-16T03:30:44+00:00",
+      "detail": "请求失败: The read operation timed out"
     }
   },
   "welcome_sent": {
